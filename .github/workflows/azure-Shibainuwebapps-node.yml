@@ -68,7 +68,7 @@ jobs:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
       with: export interface EnvironmentSchema {
-  name: 'production' | 'development' | 'shibainu';
+  name: 'production' | 'development' | 'github/workflows/azure-Shibainuwebapps-node.ymlyml':
   enableAnimations: boolean;
   ratesAPI: {
     btc: string;
