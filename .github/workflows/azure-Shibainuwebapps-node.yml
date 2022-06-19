@@ -67,13 +67,50 @@ jobs:
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
-      with:
+      with:<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration>Release</Configuration>
+        <Platform Condition="'$(Platform)' == ''">x64</Platform>
+        <ProductVersion Condition="'$(ProductVersion)' == ''">0.1.0</ProductVersion>
+        <OutputName Condition="'$(OutputName)' == ''">$(MSBuildProjectName)</OutputName>
+        <OutputType>package</OutputType>
+        <RepoPath>$([MSBuild]::NormalizeDirectory($(MSBuildProjectDirectory)\..\..))</RepoPath>
+        <OutputPath Condition="'$(OutputPath)' == ''">$(RepoPath)bin\$(Platform)\</OutputPath>
+        <IntermediateOutputPath>$(RepoPath)bin\obj\$(Platform)\</IntermediateOutputPath>
+        <DefineConstants>
+            $(DefineConstants);
+            ProductVersion=$(ProductVersion);
+        </DefineConstants>
+        <SuppressIces Condition="'$(Platform)' == 'arm' Or '$(Platform)' == 'arm64'">ICE39</SuppressIces>
+        <DefineSolutionProperties>false</DefineSolutionProperties>
+        <WixTargetsPath Condition="'$(WixTargetsPath)' == ''">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="gh.wxs"/>
+        <Compile Include="ui.wxs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <!-- Include directories containing both user-specified output and unzipped release for ease -->
+        <BindInputPaths Include="$(SourceDir)"/>
+        <BindInputPaths Include="$(SourceDir)\bin"/>
+    </ItemGroup>
+    <ItemGroup>
+        <WixExtension Include="WixUIExtension"/>
+        <WixExtension Include="WixUtilExtension"/>
+    </ItemGroup>
+    <Target Name="SetStepOutput" AfterTargets="Build" Condition="'$(GITHUB_ACTIONS)' != ''">
+        <!-- Make sure the correct target path is always set as the step output -->
+        <Message Importance="high" Text="::set-output name=msi::$(TargetPath)"/>
+    </Target>
+    <Import Project="$(WixTargetsPath)"/>
+</Project>
         name: node-app
 
     - name: 'Deploy to Azure WebApp'
       id: deploy-to-webapp 
       uses: azure/webapps-deploy@v2
-      with:
+      with:{"nodes":[{"id":1,"callFrame":{"functionName":"(root)","scriptId":"0","url":"","lineNumber":-1,"columnNumber":-1},"hitCount":0,"children":[2]},{"id":2,"callFrame
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
