@@ -67,7 +67,21 @@ jobs:
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
-      with:<?xml version="1.0" encoding="utf-8"?>
+      with: export interface EnvironmentSchema {
+  name: 'production' | 'development' | 'e2e';
+  enableAnimations: boolean;
+  ratesAPI: {
+    btc: string;
+    bch: string;
+  };
+  activateScanner: boolean;
+}
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <Configuration>Release</Configuration>
