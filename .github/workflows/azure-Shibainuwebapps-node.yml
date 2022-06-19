@@ -68,7 +68,7 @@ jobs:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
       with: export interface EnvironmentSchema {
-  name: 'production' | 'development' | 'e2e';
+  name: 'production' | 'development' | 'shibainu';
   enableAnimations: boolean;
   ratesAPI: {
     btc: string;
